@@ -9,7 +9,7 @@ from urllib3.util.retry import Retry
 
 class MainWindow():
     def __init__(self, *args, **kwargs):
-        self.press_delta = 0.00001
+        self.press_delta = 0.1
         self.map_zoom = 5
         self.map_ll = [37.977751, 55.757718]
         self.map_l = 'map'
@@ -20,6 +20,14 @@ class MainWindow():
             self.map_zoom += 1
         elif event == 'down':
             self.map_zoom -= 1
+        if event == 'w':
+            self.map_ll[1] += self.press_delta
+        if event == 's':
+            self.map_ll[1] -= self.press_delta
+        if event == 'a':
+            self.map_ll[0] -= self.press_delta
+        if event == 'd':
+            self.map_ll[0] += self.press_delta
 
     def update_map(self):
         map_params = {
@@ -51,6 +59,13 @@ running2 = True
 w = MainWindow()
 w.update_map()
 pygame.display.flip()
+
+
+def func():
+    w.update_map()
+    pygame.display.flip()
+
+
 while running2:
     screen.fill((0, 0, 0))
     for event in pygame.event.get():
@@ -59,11 +74,18 @@ while running2:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 w.keyPressEvent('up')
-                w.update_map()
-                pygame.display.flip()
             elif event.key == pygame.K_DOWN:
                 w.keyPressEvent('down')
+            elif event.key == pygame.K_w:
+                w.keyPressEvent('w')
                 w.update_map()
-                pygame.display.flip()
+            elif event.key == pygame.K_s:
+                w.keyPressEvent('s')
+            elif event.key == pygame.K_a:
+                w.keyPressEvent('a')
+            elif event.key == pygame.K_d:
+                w.keyPressEvent('d')
+            w.update_map()
+            pygame.display.flip()
 # Удаляем за собой файл с изображением.
 os.remove('tmp.png')
