@@ -12,7 +12,9 @@ class MainWindow():
         self.press_delta = 0.1
         self.map_zoom = 5
         self.map_ll = [37.977751, 55.757718]
-        self.map_l = 'map'
+        self.lst = ['map', 'sat', 'sat,skl']
+        self.index = 0
+        self.map_l = self.lst[self.index]
         self.map_key = ''
 
     def keyPressEvent(self, event):
@@ -20,6 +22,9 @@ class MainWindow():
             self.map_zoom += 1
         elif event == 'down':
             self.map_zoom -= 1
+        if event == 'e':
+            self.index = (self.index + 1) % 3
+            self.map_l = self.lst[self.index]
         if event == 'w':
             self.map_ll[1] += self.press_delta
         if event == 's':
@@ -33,7 +38,8 @@ class MainWindow():
         map_params = {
             "ll": ','.join(map(str, self.map_ll)),
             "l": self.map_l,
-            'z': self.map_zoom
+            'z': self.map_zoom,
+
         }
         # создаем сессию запросов
         session = requests.Session()
@@ -85,6 +91,8 @@ while running2:
                 w.keyPressEvent('a')
             elif event.key == pygame.K_d:
                 w.keyPressEvent('d')
+            elif event.key == pygame.K_e:
+                w.keyPressEvent('e')
             w.update_map()
             pygame.display.flip()
 # Удаляем за собой файл с изображением.
