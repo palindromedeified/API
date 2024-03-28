@@ -64,6 +64,7 @@ class Example(QMainWindow, Ui_MainWindow):
         self.coords = None
         self.lineEdit.mousePressEvent = self.mousePressEvent
         self.pushButton_2.clicked.connect(self.reset)
+        self.checkBox.clicked.connect(self.checkbox_checking)
         self.getImage()
 
     def run(self):
@@ -72,12 +73,14 @@ class Example(QMainWindow, Ui_MainWindow):
         if self.coords is not None:
             self.map_ll = self.coords
             pt = f'{self.coords[0]},{self.coords[1]}'
-            text = get_full_address(self.lineEdit.text())
-            if self.checkBox.isChecked():
-                self.show_full_address(f'Адрес: {text[0]} Почтовый индекс: {text[1]}')
-            else:
-                self.show_full_address(f'Адрес: {text[0]}')
             self.getImage()
+
+    def checkbox_checking(self):
+        text = get_full_address(self.lineEdit.text())
+        if self.checkBox.isChecked():
+            self.show_full_address(f'Адрес: {text[0]} Почтовый индекс: {text[1]}')
+        else:
+            self.show_full_address(f'Адрес: {text[0]}')
 
     def getImage(self):
         map_request = 'https://static-maps.yandex.ru/1.x/'
