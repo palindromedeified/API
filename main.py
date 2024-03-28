@@ -1,4 +1,5 @@
 import os
+import pprint
 import sys
 from PyQt5 import uic
 import requests
@@ -39,9 +40,10 @@ def get_full_address(address):
     response = requests.get(api_url, params=params)
     try:
         data = response.json()
-        address = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"][
-            "GeocoderMetaData"]['Address']['formatted']
-        return address
+        res_address = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"][
+            "GeocoderMetaData"]['Address']
+        post_id = res_address['postal_code'] if 'postal_code' in res_address else 'не найден'
+        return res_address['formatted'], post_id
     except Exception:
         return None
 
@@ -55,6 +57,7 @@ class Example(QMainWindow, Ui_MainWindow):
         self.map_ll = [37.977751, 55.757718]
         self.lst = ['map', 'sat', 'sat,skl']
         self.index = 0
+        self.dl_index = 1
         self.map_l = self.lst[self.index]
         self.map_key = ''
         self.pushButton.clicked.connect(self.run)
@@ -69,7 +72,11 @@ class Example(QMainWindow, Ui_MainWindow):
         if self.coords is not None:
             self.map_ll = self.coords
             pt = f'{self.coords[0]},{self.coords[1]}'
-            self.show_full_address(get_full_address(self.lineEdit.text()))
+            text = get_full_address(self.lineEdit.text())
+            if self.checkBox.isChecked():
+                self.show_full_address(f'Адрес: {text[0]} Почтовый индекс: {text[1]}')
+            else:
+                self.show_full_address(f'Адрес: {text[0]}')
             self.getImage()
 
     def getImage(self):
@@ -96,14 +103,16 @@ class Example(QMainWindow, Ui_MainWindow):
 
     def mousePressEvent(self, a0):
         pos = a0.pos()
-        if 10 <= pos.x() <= 471 and 10 <= pos.y() <= 41:
+        if 0 <= pos.x() <= 633 and 0 <= pos.y() <= 110:
             self.lineEdit.setEnabled(True)
             self.pushButton.setEnabled(True)
             self.pushButton_2.setEnabled(True)
+            self.checkBox.setEnabled(True)
         else:
             self.lineEdit.setEnabled(False)
             self.pushButton.setEnabled(False)
             self.pushButton_2.setEnabled(False)
+            self.checkBox.setEnabled(False)
 
     def reset(self):
         global pt
@@ -116,20 +125,22 @@ class Example(QMainWindow, Ui_MainWindow):
         key = event.key()
         key2 = event.text()
         if key == Qt.Key_Up:
+            self.dl_index += 1.5
             self.map_zoom += 1
         if key == Qt.Key_Down:
             self.map_zoom -= 1
+            self.dl_index -= 1.5
         if key == Qt.Key_E or key2 == 'у':
             self.index = (self.index + 1) % 3
             self.map_l = self.lst[self.index]
         if key == Qt.Key_W or key2 == 'ц':
-            self.map_ll[1] += self.press_delta / self.map_zoom
+            self.map_ll[1] += self.press_delta / (self.map_zoom * self.dl_index)
         if key == Qt.Key_S or key2 == 'ы':
-            self.map_ll[1] -= self.press_delta / self.map_zoom
+            self.map_ll[1] -= self.press_delta / (self.map_zoom * self.dl_index)
         if key == Qt.Key_A or key2 == 'ф':
-            self.map_ll[0] -= self.press_delta / self.map_zoom
+            self.map_ll[0] -= self.press_delta / (self.map_zoom * self.dl_index)
         if key == Qt.Key_D or key2 == 'в':
-            self.map_ll[0] += self.press_delta / self.map_zoom
+            self.map_ll[0] += self.press_delta / (self.map_zoom * self.dl_index)
         self.getImage()
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
-    <height>565</height>
+    <width>633</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>90</y>
+      <x>20</x>
+      <y>120</y>
       <width>600</width>
       <height>450</height>
      </rect>
@@ -79,13 +79,26 @@
      <string/>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Почтовый индекс</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>623</width>
+     <width>633</width>
      <height>21</height>
     </rect>
    </property>
