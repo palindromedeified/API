@@ -29,6 +29,23 @@ def get_coord(address):
         return None
 
 
+def get_full_address(address):
+    api_url = "https://geocode-maps.yandex.ru/1.x/"
+    params = {
+        "apikey": '40d1649f-0493-4b70-98ba-98533de7710b',
+        "format": "json",
+        "geocode": address,
+    }
+    response = requests.get(api_url, params=params)
+    try:
+        data = response.json()
+        address = data["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["metaDataProperty"][
+            "GeocoderMetaData"]['Address']['formatted']
+        return address
+    except Exception:
+        return None
+
+
 class Example(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -52,8 +69,8 @@ class Example(QMainWindow, Ui_MainWindow):
         if self.coords is not None:
             self.map_ll = self.coords
             pt = f'{self.coords[0]},{self.coords[1]}'
+            self.show_full_address(get_full_address(self.lineEdit.text()))
             self.getImage()
-        self.lineEdit.clear()
 
     def getImage(self):
         map_request = 'https://static-maps.yandex.ru/1.x/'
@@ -66,6 +83,9 @@ class Example(QMainWindow, Ui_MainWindow):
             map_params['pt'] = f'{pt},pm2rdm'
         self.response = requests.get(map_request, params=map_params)
         self.initUI()
+
+    def show_full_address(self, text):
+        self.label_full_address.setText(text)
 
     def initUI(self):
         self.setWindowTitle('Отображение карты')
@@ -88,7 +108,8 @@ class Example(QMainWindow, Ui_MainWindow):
     def reset(self):
         global pt
         pt = None
-
+        self.label_full_address.clear()
+        self.lineEdit.clear()
         self.getImage()
 
     def keyPressEvent(self, event):
