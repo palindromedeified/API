@@ -6,6 +6,26 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+# Определение констант
+WHITE = (255, 255, 255)
+TEXT_COLOR = (0, 0, 0)
+
+
+# Функция для поиска объекта по его названию
+def get_coord(address):
+    url = 'http://geocode-maps.yandex.ru/1.x/'
+    params = {
+        "apikey": '40d1649f-0493-4b70-98ba-98533de7710b',
+        "geocode": address,
+        "format": "json",
+        'lang': 'ru_RU'
+    }
+    response = requests.get(url, params=params).json()
+    # Получаем координаты центра объекта
+    pos = response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]
+    lon, lat = map(float, pos.split())
+    return lon, lat
+
 
 class MainWindow():
     def __init__(self, *args, **kwargs):
@@ -39,28 +59,17 @@ class MainWindow():
             "ll": ','.join(map(str, self.map_ll)),
             "l": self.map_l,
             'z': self.map_zoom,
-
         }
-        # создаем сессию запросов
-        session = requests.Session()
-        # устанавливаем настройки для повторного подключения
-        retry = Retry(total=10, connect=5, backoff_factor=0.5)
-        # задаем настройки количества попыток и т д
-        adapter = HTTPAdapter(max_retries=retry)
-        # регистрируем адаптеры для подключения
-        # session.mount('http://', adapter)
-        # session.mount('https://', adapter)
-        # выполняем запрос с нашими параметрами
-        response = session.get('https://static-maps.yandex.ru/1.x/',
-                               params=map_params)
-        # создаем файл для записи картинки из запроса
+        response = requests.get('https://static-maps.yandex.ru/1.x/', params=map_params)
         with open('tmp.png', mode='wb') as tmp:
             tmp.write(response.content)
+
         screen.blit(pygame.image.load('tmp.png'), (0, 0))
 
 
 pygame.init()
 screen = pygame.display.set_mode((600, 400))
+font = pygame.font.Font(None, 24)
 running2 = True
 w = MainWindow()
 w.update_map()
