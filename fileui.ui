@@ -32,22 +32,38 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>461</width>
+      <width>441</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::ActionsContextMenu</enum>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>460</x>
       <y>10</y>
-      <width>131</width>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>Искать</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>10</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сброс</string>
     </property>
    </widget>
   </widget>

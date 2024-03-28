@@ -43,6 +43,7 @@ class Example(QMainWindow, Ui_MainWindow):
         self.pushButton.clicked.connect(self.run)
         self.coords = None
         self.lineEdit.mousePressEvent = self.mousePressEvent
+        self.pushButton_2.clicked.connect(self.reset)
         self.getImage()
 
     def run(self):
@@ -61,7 +62,7 @@ class Example(QMainWindow, Ui_MainWindow):
             "l": self.map_l,
             'z': self.map_zoom,
         }
-        if self.coords is not None:
+        if pt is not None:
             map_params['pt'] = f'{pt},pm2rdm'
         self.response = requests.get(map_request, params=map_params)
         self.initUI()
@@ -78,9 +79,17 @@ class Example(QMainWindow, Ui_MainWindow):
         if 10 <= pos.x() <= 471 and 10 <= pos.y() <= 41:
             self.lineEdit.setEnabled(True)
             self.pushButton.setEnabled(True)
+            self.pushButton_2.setEnabled(True)
         else:
             self.lineEdit.setEnabled(False)
             self.pushButton.setEnabled(False)
+            self.pushButton_2.setEnabled(False)
+
+    def reset(self):
+        global pt
+        pt = None
+
+        self.getImage()
 
     def keyPressEvent(self, event):
         key = event.key()
